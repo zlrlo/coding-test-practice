@@ -6,19 +6,9 @@ function solution(answers) {
         score : [0, 0, 0] 
     }
 
-    answers.forEach((value, index) => {
-        if(value === students.answer[0][index + 5 % 5]) {
-            students.score[0] += 1; 
-        }
-
-        if(value === students.answer[1][index + 8 % 8]) {
-            students.score[1] += 1; 
-        }
-
-        if(value === students.answer[2][index + 10 % 10]) {
-            students.score[2] += 1; 
-        }
-    });
+    students.score[0] = answers.filter((v, i) => v === students.answer[0][i % 5]).length
+    students.score[1] = answers.filter((v, i) => v === students.answer[1][i % 8]).length;
+    students.score[2] = answers.filter((v, i) => v === students.answer[2][i % 10]).length;
 
     const maxScore = students.score.reduce((prev, curr) => prev > curr ? prev : curr ); 
 
@@ -29,4 +19,4 @@ function solution(answers) {
     return answer;
 }
 
-solution([1]); 
+solution([1, 2, 3, 4, 5]); 
