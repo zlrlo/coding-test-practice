@@ -1,28 +1,12 @@
 function solution(s) {
     var answer = '';
 
-    let p1 = 0; 
-    let p2 = s.length - 1; 
-
-    while(true) {
-        let v1 = s[p1]; 
-        let v2 = s[p2]; 
-
-        if(p1 === p2) {
-            answer = v1; 
-            break; 
-        }
-
-        if(p1 > p2) {
-            answer = (s[p2] + s[p1]); 
-            break; 
-        }
-
-        p1 += 1; 
-        p2 -= 1; 
-    }
+    const sLen = s.length; 
+    let mid = Math.floor(sLen / 2); 
+    
+    answer = sLen % 2 === 0 ? s[mid - 1] + s[mid] : s[mid]; 
 
     return answer;
 }
 
-solution("q"); 
+solution("abcde");
