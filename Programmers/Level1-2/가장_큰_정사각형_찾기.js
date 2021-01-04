@@ -1,54 +1,71 @@
-const getMinDist = (y, x, board, boardY, boardX) => {
-    let distY = 0;
-    let distX = 0; 
+const makeAccBoard = (accBoard, board, boardY, boardX) => {
+    accBoard[0][0] = board[0][0]; 
 
-    let dy = y; 
-    let dx = x; 
-
-    while(true) {
-        if(dx >= boardX || board[y][dx] === 0) break;
-        distX += 1; 
-        dx += 1; 
+    for(let y = 1; y < boardY; y++){
+        accBoard[y][0] = accBoard[y - 1][0] + board[y][0]; 
     }
 
-    while(true) {
-        if(dy >= boardY || board[dy][x] === 0) break;
-        distY += 1; 
-        dy += 1; 
+    for(let x = 1; x < boardX; x++){
+        accBoard[0][x] = accBoard[0][x - 1] + board[0][x]; 
     }
 
-    return Math.min(distY, distX); 
-}
-
-const checkBoard = (board, minDist, y, x) => {
-    for(let i = 0; i < minDist; i++) {
-        for(let j = 0; j < minDist; j++) {
-            if(board[y + i][x + j] === 0) return false; 
+    for(let y = 1; y < boardY; y++){
+        for(let x = 1; x < boardX; x++){
+            accBoard[y][x] = accBoard[y - 1][x] + accBoard[y][x - 1] - accBoard[y - 1][x - 1] + board[y][x]; 
         }
     }
+}
 
-    return true; 
+const getMaxArea = (y, x, accBoard, boardY, boardX, board, n) => {
+    let dy, dx;
+    let maxArea = 1;  
+
+    if(n === 0) n = 1; 
+
+    while(true) {
+        dy = y + n; 
+        dx = x + n; 
+        if(dy < 0 || dy >= boardY || dx < 0 || dx >= boardX) break; 
+
+        if(board[dy][dx] === 0) break; 
+        let sum = 0; 
+        sum += accBoard[dy][dx]; 
+        if(x - 1 >= 0) sum -= accBoard[dy][x - 1];
+        if(y - 1 >= 0) sum -= accBoard[y - 1][dx];
+        if(y - 1 >= 0 && x - 1 >= 0) sum += accBoard[y - 1][x - 1];  
+
+        if(sum === ((n + 1)*(n + 1))) {
+            maxArea = sum;
+            n += 1;
+        }
+        else break;  
+         
+    }
+
+    return maxArea; 
 }
 
 function solution(board)
 {
     var answer = 0;
 
-    const boardY = board.length;
-    const boardX = board[0].length;  
+    const boardY = board.length; 
+    const boardX = board[0].length;
+    
+    let accBoard = Array.from(Array(boardY), () => new Array(boardX)); 
+
+    makeAccBoard(accBoard, board, boardY, boardX); 
+
     for(let y = 0; y < boardY; y++){
         for(let x = 0; x < boardX; x++){
             if(board[y][x] === 1) {
-                const minDist = getMinDist(y, x, board, boardY, boardX); 
-                const isPossible = checkBoard(board, minDist, y, x); 
-                if(isPossible && answer < minDist * minDist) answer = minDist * minDist;  
+                const maxArea = getMaxArea(y, x, accBoard, boardY, boardX, board, Math.sqrt(answer)); 
+                if(answer < maxArea) answer = maxArea;  
             }
         }
     }
 
-
-    console.log(answer); 
     return answer;
 }
 
-solution([[0,0,1,1],[1,1,1,1]]);
+solution([[0,1,1,1],[1,1,1,1],[1,1,1,1],[0,0,1,0]]); 
